@@ -8,10 +8,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Link2, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { ConfirmModal } from "@/components/confirm-modal";
+
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/convex/_generated/api";
+
+import { Link2, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface ActionsProps {
     children: React.ReactNode
@@ -20,6 +24,7 @@ interface ActionsProps {
     id: string
     title: string
 }
+
 export const Actions = ({
                             children,
                             side,
@@ -32,8 +37,8 @@ export const Actions = ({
         navigator.clipboard.writeText(
             `${window.location.origin}/board/${id}`
         )
-            .then(()=> toast.success("Link copied to clipboard"))
-            .catch(()=> toast.error("Failed to copy link"))
+            .then(() => toast.success("Link copied to clipboard"))
+            .catch(() => toast.error("Failed to copy link"))
     }
 
     const onDelete = () => {
@@ -44,6 +49,7 @@ export const Actions = ({
 
     return (
         <div className="absolute z-50 top-1 right-1">
+
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     {children}
@@ -61,13 +67,20 @@ export const Actions = ({
                         <Link2 className="h-4 w-4 mr-2"/>
                         Copy board link
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        className="p-3 cursor-pointer"
-                        onClick={onDelete}
+                    <ConfirmModal
+                        header="Deleting board?"
+                        description="This will delete this board and all it's contents. Are you sure you want to continue?"
+                        disabled={loading}
+                        onConfirm={onDelete}
                     >
-                        <Trash2 className="h-4 w-4 mr-2"/>
-                        Delete
-                    </DropdownMenuItem>
+                        <Button
+                            variant="ghost"
+                            className="p-3 cursor-pointer text-sm w-full justify-start font-normal"
+                        >
+                            <Trash2 className="h-4 w-4 mr-2"/>
+                            Delete
+                        </Button>
+                    </ConfirmModal>
 
                 </DropdownMenuContent>
             </DropdownMenu>
